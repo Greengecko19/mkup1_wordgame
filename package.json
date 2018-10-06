@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "browserify": "^16.2.2",
+    "inquirer": "^6.2.0",
     "random-words": "^1.1.0",
     "require": "^2.4.20"
   }
