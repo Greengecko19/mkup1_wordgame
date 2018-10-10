@@ -1,76 +1,84 @@
 
 
-var Letter = require("./letter.js");
-var randomWord = require('random-words');
-var selectedWord = "";  // temp storage of random word chosen
-var num1 = 0; //counter for random word search tries
+var letter = require("./letter.js");
+var randomWord = require("random-words");
 
-var resultArray = [];  // stores True/False for each position
-var holder;            // temporarily holds new Letter object while creating letter array from selected word and guesses
-var displayArray = [];
-
-// var guess; // ***** temporary - remove for final
-
-// Word(); // ***** temporary -- for testing only
 
 function Word() {
+    var selectedWord = "";  // temp storage of random word chosen
+    var tf_Array = [];  // stores True/False for each position
+    var tempLetter;            // temporarily holds new Letter object while creating letter array from selected word and guesses
+    var wordSplitArray = [];   // save letters individually in array
 
+    // var guess; // ***** temporary - remove for final
+    // Word(); // ***** temporary -- for testing only
+
+    
     //Get a random word
-    selectedWord = randomWord();
-    // selectedWord = "possibly"; // ***** temporary -- for testing only
-    num1++;
     while (selectedWord.length < 5) {  // word must be at least 5 letters long
-        selectedWord = randomWord();
-        num1++; // ***** temporary counter for testing only
+        selectedWord = randomWord();    
     }
+
+    // selectedWord = "possibly"; // ***** temporary -- for testing only
+    this.selectedWord = selectedWord;
     console.log("selectedWord: " + selectedWord);
     
     this.guessesLeft = (selectedWord.length * 2);  // give the user twice the number of letters to guess the word
 
-    // console.log("Number of attempts:  " + num1);  // shows how many attempts required
     // guess = "s";  // ***** temporary - remove for final
+    // console.log("Your guess: " + guess);
+    
+ 
+    //Make a "Letter" instance for each letter in selectedWord
+    var split_word = selectedWord.split("");
+    split_word.forEach( function(l) {
+        var temp = new letter(l);
+        console.log("temp: " + temp);  
+        wordSplitArray.push(temp);
+    });
+
+    this.wordSplitArray = wordSplitArray;
+    console.log("wordSplitArray:  " + JSON.stringify(wordSplitArray));
+    
 
     // Create an array consisting of the individual letters of the word
     for (i=0; i < selectedWord.length; i++) {
         
-        holder = new Letter(selectedWord[i]);
-        console.log("i:  " + i);
-        console.log("holder:  " + holder.letter ); // displays value of the letter
-        
-        resultArray.push(holder.checkGuess());
-
+        tempLetter = new letter(selectedWord[i]);
+        console.log("i:" + i + "  tempLetter:  " + tempLetter.letter ); // displays value of the letter
+        tf_Array.push(tempLetter.checkGuess());
+        // console.log("tf_Array (line 42):  " + tf_Array);  // shows guessed T/F state for each position in the word
     } // End of for loop
 
-    console.log("resultArray (line 43):  " + resultArray);  // shows guessed T/F state for each position in the word
+    this.tf_Array = tf_Array;
 
-    this.resultArray = resultArray;
-
-    // Display current word state
-    this.showLetters = function(guess) {
-        for (i=0; i < resultArray.length; i++) {
-            if (resultArray[i]) {
-                displayArray.push(guess);
-            }
-            else {
-                displayArray.push("_");
-            }
-        }
-        this.spacedArray = displayArray.join(" ");
-        console.log("Your current guesses (displayArray, Word.js - line 57):  " + displayArray.join(" "));
-    }
-
-    this.checkGuess = function(guess) {
-        for (i=0; i < displayArray.length; i++) {
-            var matchesFound = 0;
-            console.log(holder.wasGuessed);
+    // Display current word state -- parses each position of the array to see if it is True or False, then pushes either a letter or "_" into displayArray
+    this.showLetters = function() {
+        var displayArray = "";
+        this.wordSplitArray.forEach( function(letter){
+            displayArray += letter.showChar() + " ";
             
-            if ((holder.wasGuessed === false) && (holder.checkGuess(guess) === true)) {
-                holder.wasGuessed = true;
-                matchesFound++;
-            }
-        }
-         
+            // if (wordSplitArray.wasGuessed === true) {
+            //     displayArray.push(wordSplitArray.letter);
+            //     }
+            // else {
+            //         displayArray.push("_");
+            // }
+        })
+                
+                console.log("displayArray: "  + displayArray);
 
+        } // end of function
+        
+
+    this.checkGuess = function(guess) {  
+        this.tf_Array.forEach ( function(letter){
+            console.log("letter.wasGuessed:  "  + letter.wasGuessed);
+            
+            if ((letter.wasGuessed === false) && (letter.checkGuess(guess) === true)) {
+                letter.wasGuessed = true;
+            }
+        })       
     }
     
     // this.showLetters(); // ***** temporary -- for testing only

@@ -1,23 +1,17 @@
 
 
 var WordState = require("./word.js");
-var Letter = require("./letter.js");
 var inquirer = require('inquirer');
 
-var letters_guessed = new Set();
-var badGuesses = [];
+var lettersGuessed = [];
 var wordState = new WordState(); // new guess state
-var letterInProcess = new Letter();
 
 var gameOver = false;
 var numGuesses = 0;  //  total guesses
-var isItRight = false;  // current guess status
+var guessesLeft = 0; // remaining guesses available
+var lettersLeft = wordState.selectedWord.length;
+console.log("lettersLeft: "  + lettersLeft);
 
-var guesses_left = wordState.resultArray.length;
-var letters_left = wordState.resultArray.length;
-
-
-console.log("Index line 16:  " + wordState.spacedArray ); // display current guessing progress
 
 playGame();
 
@@ -36,51 +30,59 @@ function playGame() {
         }
         else {
             console.log("You can only guess one letter at a time!\n");
+            console.log(response.toString());
+            
             playGame();
         }
     });
 }  // end of function playGame()
     
-   
+
 // console.log("Your current guesses (Index line 50):  " + WordState.displayArray.join(" "));
 
 //Logic for responding to guesses
 function guess(guessedLetter){
 
-        if (!letters_guessed.has(guessedLetter)){   // if guess matches one letter in word, add it to the list of letters guessed
-            letters_guessed.add(guessedLetter);
+        if (!lettersGuessed.includes(guessedLetter)){   // if guess has not been previously used, add it to the list of letters used
+            lettersGuessed.push(guessedLetter);    // store all guesses
+            guessesLeft--;
         }
         else {
             console.log("That letter has already been guessed.\n");
-            // badGuesses.push(guessedLetter);                     // store bad guesses
-            // console.log("Incorrect guesses so far: " + badGuesses);
+            console.log("Letters already used: " + lettersGuessed);
             return;
         }
+        console.log("wordState.checkGuess(guessedLetter):  " + wordState.checkGuess(guessedLetter));
         
-        console.log("isItRight 56: " + isItRight);
-        isItRight = wordState.checkGuess(guessedLetter);
-        console.log("isItRight 58: " + isItRight);
-
+        var isItRight = wordState.checkGuess(guessedLetter);
+        console.log("isItRight: " + isItRight);
+        
+        
         if (isItRight === true) {
             console.log("You guessed correctly!\n");
-            letters_left -= isItRight;
-            console.log("You have " + guessesLeft + " remaining!\n");
+            console.log("Letters already used: " + lettersGuessed);
+            numGuesses++;
+            guessesLeft--;
+            console.log("You have " + guessesLeft + " guesses remaining!\n");
         }
         else {
             numGuesses++;
-            console.log("Incorrect! You have made " + numGuesses + " so far.\n");
+            guessesLeft--;
+            console.log("Incorrect! You have made " + numGuesses + " guesses so far.\n");
+            console.log("Letters already used: " + lettersGuessed);
             console.log("You have " + guessesLeft + " remaining!\n");
         }
     
-        if (letters_left === 0) {
+        if (lettersLeft === 0) {
             console.log("You got it!");
-            word.showLetters();
+            wordState.showLetters();
             gameOver = true;
         }
     
         if (guessesLeft === 0){
             console.log("Boo-hoo, you lost! :(");
-            console.log("The word was " + word.word)
+            console.log("The word was " + wordState.selectedWord);
+            console.log("The word was " + wordState.resultArray);
             gameOver = true;
         }
 
@@ -103,4 +105,22 @@ function guess(guessedLetter){
 // 
 // else {
 //     console.log("OK, no game then.");
+// }
+
+//////// Murial's code ////////////
+// var playGame = () => {
+// 	if(guessesLeft > 0){
+// 		inquirer.prompt([
+// 			{
+// 				type: "input",
+// 				message: "Guess a letter in the word: " + word.showWord(),
+// 				name: "guess"
+// 			}
+// 		]).then((res) => {
+//             letterInProcess.displayChar(res.lettersLeft);
+            
+			
+// 			playGame();
+// 		})
+// 	}
 // }

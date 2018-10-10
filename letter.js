@@ -4,16 +4,7 @@ function Letter(letter) {
     this.letter = letter; //holds the letter for the current position
     this.wasGuessed = false; //indicates if current position has been guessed or not
 
-    this.displayChar = function() {
-        if (!this.wasGuessed) {
-            return "_";
-        }
-        else {
-            return this.letter;
-        }
-    }
-    
-    this.checkGuess = function(guess) {
+    this.checkGuess = function(guess) {  // 
         if (guess === this.letter) {
             this.wasGuessed = true;
             return true;
@@ -22,16 +13,28 @@ function Letter(letter) {
             return false;
         }
     }
-    
+
+    this.showChar = function() {  //  if the letter was guessed, display the letter, otherwise display "_"
+        if(this.wasGuessed === false){
+            return "_";
+        }
+        else{
+            return this.letter;
+        }
+    }
 } // end of constructor
+
+module.exports = Letter;
+
+
 
 
 //////// vvv WORKING CODE BELOW vvv //////////
-// var tempWord = "tree";
+// var tempWord = "shipwreck";
 // var holder;
 // var letterArray = [];
 // var resultArray = [];
-// var guess = "r";
+// var guess = "p";
 
 
 // for (i=0; i < tempWord.length; i++) {
@@ -73,5 +76,3 @@ function Letter(letter) {
 // console.log( "temp.position: " + temp.position() );
 // temp.guessed = true;
 // console.log( "temp.position: " + temp.position() );
-
-module.exports = Letter;
