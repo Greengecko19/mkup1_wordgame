@@ -1,5 +1,3 @@
-
-
 function Letter(letter) {
     this.letter = letter; //holds the letter for the current position
     this.wasGuessed = false; //indicates if current position has been guessed or not
@@ -15,7 +13,7 @@ function Letter(letter) {
     }
 
     this.showChar = function() {  //  if the letter was guessed, display the letter, otherwise display "_"
-        if(this.wasGuessed === false){
+        if (!this.wasGuessed){
             return "_";
         }
         else{
